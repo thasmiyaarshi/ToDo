@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List App</title>
+<style>
+    body {
+        font-family:Georgia, 'Times New Roman', Times, serif;
+    
+        background: linear-gradient(to left, rgb(235, 164, 235),rgb(196, 196, 238));
+        padding: 20px;
+        
+    }
+    h2 {
+        text-align: center;
+        font-size: 50px;
+    }
+    form {
+        background: rgb(236, 237, 239);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+        padding: 10px;
+        margin: 5px;
+        margin-right: 110px;
+        margin-bottom: 40px;
+        margin-top: 40px;
+        height: 40px;
+        border-radius: 5%;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgb(23, 23, 22);
+    }
+    th, td {
+        border: 1px solid #1a1b19;
+        padding: 20px;
+        text-align: center;
+    }
+    th {
+        background: #e4e2e5;
+    }   
+    .action-btn {
+        cursor: pointer;
+        padding: 5px 8px;
+        border: none;
+        color: rgb(19, 20, 20);
+        border-radius: 4px;
+    }
+    .edit-btn {
+        background-color: #c2dcc8;
+    }
+    .delete-btn {
+        background-color: #35e69f;
+    }
+    
+</style>
+</head>
+<body>
+
+<h2>📋 To-Do List</h2>
+
+<form id="taskForm">
+    <input type="text" id="task" placeholder="Task" required>
+    <input type="date" id="startDate" required>
+    <input type="date" id="endDate" required>
+    <select id="priority" required>
+        <option value="">Priority</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+    </select>
+    <select id="status" required>
+        <option value="">Status</option>
+        <option>Pending</option>
+        <option>In Progress</option>
+        <option>Completed</option>
+    </select>
+    <button type="submit">Add Task</button>
+</form>
+
+<table id="taskTable">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    let editIndex = null;
+
+    document.getElementById("taskForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const task = document.getElementById("task").value;
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const priority = document.getElementById("priority").value;
+        const status = document.getElementById("status").value;
+
+        if (editIndex === null) {
+            addTask(task, startDate, endDate, priority, status);
+        } else {
+            updateTask(task, startDate, endDate, priority, status);
+        }
+
+        document.getElementById("taskForm").reset();
+        editIndex = null;
+    });
+
+    function addTask(task, startDate, endDate, priority, status) {
+        const table = document.querySelector("#taskTable tbody");
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${task}</td>
+            <td>${startDate}</td>
+            <td>${endDate}</td>
+            <td>${priority}</td>
+            <td>${status}</td>
+            <td>
+                <button class="action-btn edit-btn" onclick="editTask(this)">Edit</button>
+                <button class="action-btn delete-btn" onclick="deleteTask(this)">Delete</button>
+            </td>
+        `;
+    }
+
+    function editTask(button) {
+        const row = button.parentElement.parentElement;
+        editIndex = row.rowIndex - 1; // Adjust index for header row
+        document.getElementById("task").value = row.cells[0].innerText;
+        document.getElementById("startDate").value = row.cells[1].innerText;
+        document.getElementById("endDate").value = row.cells[2].innerText;
+        document.getElementById("priority").value = row.cells[3].innerText;
+        document.getElementById("status").value = row.cells[4].innerText;
+    }
+
+    function updateTask(task, startDate, endDate, priority, status) {
+        const table = document.querySelector("#taskTable tbody");
+        const row = table.rows[editIndex];
+        row.cells[0].innerText = task;
+        row.cells[1].innerText = startDate;
+        row.cells[2].innerText = endDate;
+        row.cells[3].innerText = priority;
+        row.cells[4].innerText = status;
+    }
+
+    function deleteTask(button) {
+        button.parentElement.parentElement.remove();
+    }
+</script>
+
+</body>
+</html>
+
